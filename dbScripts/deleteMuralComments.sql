@@ -1,0 +1,1 @@
+delete FROM MURAL_COMMENTS where id = 0;
