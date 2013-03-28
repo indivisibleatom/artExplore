@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<QCARConfig xsi:noNamespaceSchemaLocation="qcar_config.xsd"
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <Tracking>
+	    <ImageTarget size="100 79.754601" name="vendingzoom1" />
+	    <ImageTarget size="35.294117 50" name="vendingpart" />
+	    <ImageTarget size="108.924484 200" name="vendingmain" />
+   <MultiTarget name="vendingMachine">
+     	    <Part name="vendingzoom1" translation="54.4622 0 0" rotation="AD: 1 0 0 0"/>
+	    <Part name="vendingmain" translation="0 0 0" rotation="AD: 0 1 0 0"/>
+      	    <Part name="vendingpart" translation="154.4622 0 0" rotation="AD: 0 0 1 0"/>
+  </MultiTarget>
+  </Tracking>
+</QCARConfig>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<QCARConfig xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="qcar_config.xsd">
+  <Tracking>
+    <ImageTarget size="100 79.754601" name="vendingzoom1" />
+    <ImageTarget size="35.294117 50" name="vendingpart" />
+    <ImageTarget size="108.924484 200" name="vendingmain" />
+  </Tracking>
+</QCARConfig>

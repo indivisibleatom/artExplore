@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <title>MultiImage target2</title>
+        <link rel="stylesheet" href="css/jslog.css" />
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
+        <meta name="arenabled" />
+    </head>
+    <body>
+       <script src="http://argon.gatech.edu/argon_o.js"></script>
+       <script src="js/jslog.js"></script>
+       <script src="js/colladaLoader.js"></script>
+       <script type="text/javascript">
+	     var trackedObject1;
+
+      var myAppController =
+      {
+        onArgonReady : function()
+        {
+            JSLOG.log("On Argon ready");
+            ARGON.loadDataset("Main_Project.xml");
+        },
+
+        onRender : function()
+        {
+          JSLOG.log("OnRender");
+          /*if ( lastTransMain == null )
+          {
+             lastTransMain = trackedObject1.threeObject3D.matrix.decompose()[0];
+          }
+   
+          if (lastTransMain.x != trackedObject1.threeObject3D.matrix.decompose()[0].x)
+          {
+            JSLOG.log("Main tracked");
+          }
+          lastTransMain = trackedObject1.threeObject3D.matrix.decompose()[0];*/
+        },
+              
+        onDataSetLoaded : function(event)
+        {
+             JSLOG.log("Here as well");
+             /*var dataset      = event.dataset;
+             var vendingMain = dataset.targets["vendingmain"];                 
+             if (vendingMain)
+             {
+                        trackedObject1        = new ARGON.TrackedObject();
+                        trackedObject1.name   = "vendingmain";
+                        trackedObject1.setTarget( vendingMain );
+
+                       var divEl = document.createElement('div1');
+                       divEl.id = "cssContent";
+                       divEl.style.width = "10px";
+              	       divEl.style.height = "10px";
+	                     divEl.style.backgroundColor = "green";
+          	           divEl.style.position = 'absolute';
+	                     divEl.style.fontSize = "16px";
+		                   divEl.style.WebkitTransform = "scale3d(1, 1, 1)";
+              	       divEl.innerText = "VendingMain";
+
+                       var cssObject = new THREE.CSSObject(divEl);
+                       cssObject.width = 2;
+                       cssObject.height = 2;
+                       cssObject.position.x = 0;
+                       cssObject.position.y = 20;
+                       cssObject.position.z = 0;
+                       trackedObject1.add( cssObject );
+                       JSLOG.log("Here");
+             }*/
+        }
+      };
+            
+      document.addEventListener("AR.DataSetLoadedEvent", myAppController.onDataSetLoaded);
+			document.addEventListener("AR.ArgonReadyEvent", myAppController.onArgonReady);
+      </script>	
+    </body>
+</html>

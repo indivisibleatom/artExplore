@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<QCARConfig>
+    <Tracking>
+        <!--biggest image-->
+        <ImageTarget size="1024 1024" name="vendingCube.Left"/>
+        <!--4 sub frames of arbitrary size-->
+        <ImageTarget size="512 512" name="vendingCube.Left"/>
+        <ImageTarget size="512 512" name="vendingCube.Left"/>
+        <ImageTarget size="512 512" name="vendingCube.Left"/>
+        <ImageTarget size="512 512" name="vendingCube.Left"/>
+        <!-- each has to have 4 sub frames of arbitrary size-->
+        <ImageTarget size="256 256" name="vendingCube.Right"/>
+        <ImageTarget size="200 200" name="vendingCube.Front"/>
+        <MultiTarget name="vendingCube">
+            <Part rotation="AD: 0 1 0 0" translation="-200.0 0 0" name="vendingCube.Left"/>
+            <Part rotation="AD: 0 1 0 0" translation="150.0 0 0" name="vendingCube.Right"/>
+            <Part rotation="AD: 0 1 0 0" translation="0 0 0" name="vendingCube.Front"/>
+        </MultiTarget>
+    </Tracking>
+</QCARConfig>

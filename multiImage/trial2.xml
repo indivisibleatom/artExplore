@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<QCARConfig xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="qcar_config.xsd">
+  <Tracking>
+    <ImageTarget size="200 200" name="target1" />
+    <ImageTarget size="600 197.693573" name="combined" />
+    <MultiTarget name="vendingCube">
+      <Part rotation="AD: 0 1 0 0" translation="-200.0 0 0" name="target1"/>
+      <Part rotation="AD: 0 1 0 0" translation="0 0 0" name="combined"/>
+    </MultiTarget>
+  </Tracking>
+</QCARConfig>
