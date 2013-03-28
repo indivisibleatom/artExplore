@@ -1,0 +1,1 @@
+set VCAP_SERVICES={"mysql-5.1": [{"credentials": { "hostname": "localhost", "port": 10000, "password": "pC83YYjO8SCEq", "name": "", "user": "uNnGSs1c0ob45"}}]}
