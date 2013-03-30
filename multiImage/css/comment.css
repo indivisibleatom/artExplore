@@ -1,0 +1,9 @@
+#commentList {
+	position: 			fixed;
+	bottom: 			50px;	
+	overflow-y: 		scroll;	
+	color:				rgba(255, 255, 255, 1.0);
+	background-color: 	rgba(0, 0, 0, 0.7);
+	font-family: 		Monaco, Helvetica, Arial, sans-serif;
+	font-size: 			18px;
+}

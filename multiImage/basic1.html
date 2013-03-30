@@ -4,152 +4,132 @@
         <title>Argon Basic Yippee</title>
         <link rel="apple-touch-icon" href="assets/sample_icon_57x57.png" />
         <link rel="stylesheet" href="css/jslog.css" />
+        <link rel="stylesheet" href="css/comment.css" />
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
         <meta name="arenabled" />
     </head>
     <body>
-	 <script src="js/jslog.js"></script>
+	  <script src="js/jslog.js"></script>
         <script src="http://argon.gatech.edu/argon_o.js"></script>
         <script>
             var dataset, stonesTarget, trackedObject;
             var redCube, redMaterial, redGeometry;
-            var currentObject;
+            var currentGrid = -1, prevGrid = -1;
 
-            var myAppController =
-            {
-                geoObject : null,
-                
-                cube : null,
-                
-                createContent : function()
-                {
-                    var cubeGeometry, cubeMaterial;
-                    cubeGeometry = new THREE.CubeGeometry(100, 100, 100, 2, 2, 2);
-                    cubeMaterial = new THREE.MeshLambertMaterial({ color: 0xFFFF00, shading: THREE.FlatShading, overdraw: true });
-                    
-                    cube = new THREE.Mesh( cubeGeometry, cubeMaterial );
-                    cube.position.x = 0;
-                    cube.position.y = 0;
-                    cube.position.z = 0;
-                    cube.scale.x = 10;
-                    cube.scale.y = 10;
-                    cube.scale.z = 10;
-                    
-                    var ori = new THREE.Object3D();
-                    ori.position.x = 0;
-                    ori.position.y = 0;
-                    ori.position.z = 500.0;
-                    ori.scale.x = 1;
-                    ori.scale.y = 1;
-                    ori.scale.z = 1;
-                
-                    geoObject = ARGON.createGeoObject(33.7772722222222,-84.3895361111111, 0);
-                    geoObject.add( cube );
-                    
-                    ARGON.World.add( geoObject );
-                },
-
-		  onRender : function()
-		  {
-		    if (stonesTarget._visible)
-		    {
-		      JSLOG.log(trackedObject.threeObject3D.matrix.decompose()[0].x); 
-		      redCube.position.x = trackedObject.threeObject3D.matrix.decompose()[0].x;
-		      if (trackedObject.threeObject3D.matrix.decompose()[0].x > -100 && trackedObject.threeObject3D.matrix.decompose()[0].x < 100)
-		      {
-		        if (currentObject != 1)
-		        {
-              currentObject = 1;
-              redCube.material = new THREE.MeshLambertMaterial({ color: 0xFF0000, shading: THREE.FlatShading, overdraw: true });
-            }
-		      }
-		      else if (trackedObject.threeObject3D.matrix.decompose()[0].x < -100)
-		      {
-            if (currentObject != 0)
-            {
-              currentObject = 0;
-              redCube.material = new THREE.MeshLambertMaterial({ color: 0x00FF00, shading: THREE.FlatShading, overdraw: true });
-            }
-		      }
-		      else if (trackedObject.threeObject3D.matrix.decompose()[0].x > 100 && trackedObject.threeObject3D.matrix.decompose()[0].x < 300)
-		      {
-            if (currentObject != 2)
-            {
-              currentObject = 2;
-              redCube.material = new THREE.MeshLambertMaterial({ color: 0x0000FF, shading: THREE.FlatShading, overdraw: true });
-            }
-		      }
-		      else if (trackedObject.threeObject3D.matrix.decompose()[0].x > 300 && trackedObject.threeObject3D.matrix.decompose()[0].x < 500)
-		      {
-            if (currentObject != 3)
-            {
-              currentObject = 3;
-              redCube.material = new THREE.MeshLambertMaterial({ color: 0x00FFFF, shading: THREE.FlatShading, overdraw: true });
-            }
-		      }
-		      else if (trackedObject.threeObject3D.matrix.decompose()[0].x > 500 && trackedObject.threeObject3D.matrix.decompose()[0].x < 700)
-		      {
-            if (currentObject != 4)
-            {
-              currentObject = 4;
-              redCube.material = new THREE.MeshLambertMaterial({ color: 0xFF000FF, shading: THREE.FlatShading, overdraw: true });
-            }
-		      }
-		      else if (trackedObject.threeObject3D.matrix.decompose()[0].x > 700 && trackedObject.threeObject3D.matrix.decompose()[0].x < 900)
-		      {
-            if (currentObject != 5)
-            {
-              currentObject = 5;
-              redCube.material = new THREE.MeshLambertMaterial({ color: 0xFFFF00, shading: THREE.FlatShading, overdraw: true });
-            }
-		      }
-		      else if (trackedObject.threeObject3D.matrix.decompose()[0].x > 900)
-		      {
-            if (currentObject != 6)
-            {
-              currentObject = 6;
-              redCube.material = new THREE.MeshLambertMaterial({ color: 0xFFFFFF, shading: THREE.FlatShading, overdraw: true });
-            }
-		      }
-        }
-		  },
-                
-                onArgonReady : function()
-                {
-                    myAppController.createContent();
-                    ARGON.loadDataset("http://cc.gatech.edu/~msati3/argon/multiImage/VendingCube.xml");
-                },
-                
-                onDataSetLoaded : function(event)
-                {                  
-                    dataset      = event.dataset;
-                    stonesTarget = dataset.targets["vendingCube"];
-                    
-                    if (stonesTarget)
-                    {
-                        trackedObject        = new ARGON.TrackedObject();
-                        trackedObject.name   = "vendingMainTarget"; 
-                        
-                        trackedObject.autoHideAfterFrames = 1;
-                        trackedObject.setTarget( stonesTarget );
-                        
-                        redGeometry = new THREE.CubeGeometry(100, 100, 100, 2, 2, 2);
-                        redMaterial = new THREE.MeshLambertMaterial({ color: 0xFF0000, shading: THREE.FlatShading, overdraw: true });
-                        redCube = new THREE.Mesh( redGeometry, redMaterial );
-                        redCube.position.z = 50.0;
-                        
-                        trackedObject.add( redCube );
-                        ARGON.onRender = myAppController.onRender;
-                    }
-                }
-            };
+            var artExploreController =
+            {   
+            onRender : function()
+                       {
+                       },
             
-          document.addEventListener("AR.DataSetLoadedEvent", myAppController.onDataSetLoaded);
-          document.addEventListener("AR.DataSetActivatedEvent", myAppController.onDataSetActivated);
-          document.addEventListener("AR.ArgonReadyEvent", myAppController.onArgonReady);
+            getCurrentGrid: function()
+                           {
+                               if (trackedObject.threeObject3D.matrix.decompose()[0].x > -100 && trackedObject.threeObject3D.matrix.decompose()[0].x < 100)
+                               {
+                                   return 0;
+                               }
+                               else if (trackedObject.threeObject3D.matrix.decompose()[0].x < -100)
+                               {
+                                   return 1;
+                               }
+                               else if (trackedObject.threeObject3D.matrix.decompose()[0].x > 100 && trackedObject.threeObject3D.matrix.decompose()[0].x < 300)
+                               {
+                                   return 2;
+                               }
+                           },
+             
+            makeCommentRequest: function(grid)
+                           {
+                              xmlhttp = new XMLHttpRequest();
+                              xmlhttp.onreadystatechange=function()
+                              {
+                                if (xmlhttp.readyState==4 && xmlhttp.status==200)
+                                {
+                                  var result=JSON.parse(xmlhttp.responseText);
+                                  document.getElementById("commentList").innerHTML = "";
+                                  for (var i = 0; i < result.length; i++)
+                                  {
+                                    document.getElementById("commentList").innerHTML+= result[i].COMMENT;
+                                    document.getElementById("commentList").innerHTML+= " " + result[i].LIKES;
+                                    document.getElementById("commentList").innerHTML+= "<br/>"
+                                  }
+                                }
+                              }
+                              
+                              xmlhttp.open("GET","/getComment?ID=1&gridX=1&gridY=1&gridZ=1", true);
+                              xmlhttp.send();
+                            },
+                              
+                       
+            checkSameGrid : function()
+                           {                              
+                              if (stonesTarget._visible)
+                              {
+                                   var newCurrent = artExploreController.getCurrentGrid();
+                                   if (newCurrent == currentGrid && currentGrid != prevGrid)
+                                   {
+                                      artExploreController.makeCommentRequest(newCurrent);
+                                   }
+                                   prevGrid = currentGrid;
+                                   currentGrid = newCurrent;
+                              }
+                           },
+            
+            makeDataSetRequest : function()
+                           {
+                              if (navigator.geolocation)
+                              {
+                                navigator.geolocation.getCurrentPosition(function(position){
+                                  xmlhttp = new XMLHttpRequest();
+                                  
+                                  xmlhttp.onreadystatechange=function()
+                                  {
+                                    if (xmlhttp.readyState==4 && xmlhttp.status==200)
+                                    {                                  
+                                      var muralInfo = JSON.parse(xmlhttp.responseText);
+                                      ARGON.loadDataset(muralInfo.xml);
+                                    }
+                                  }
+                                  
+                                  xmlhttp.open("GET","/getMuralInfo?ID=1", true);
+                                  //xmlhttp.open("GET","/getMuralInfo?lat="+position.coords.latitude+"&long="+position.coords.longitude, true);
+                                  xmlhttp.send();                                  
+                                });
+                              }
+                           },
+
+            onArgonReady : function()
+                           {
+                               artExploreController.makeDataSetRequest();                               
+                           },
+             
+            onDataSetLoaded : function(event)
+                              {                  
+                                  dataset      = event.dataset;
+                                  stonesTarget = dataset.targets["vendingCube"];
+
+                                  if (stonesTarget)
+                                  {
+                                      trackedObject        = new ARGON.TrackedObject();
+                                      trackedObject.name   = "vendingMainTarget"; 
+
+                                      trackedObject.autoHideAfterFrames = 1;
+                                      trackedObject.setTarget( stonesTarget );
+
+                                      ARGON.onRender = artExploreController.onRender;
+                                      window.setInterval(artExploreController.checkSameGrid,2000);
+                                  }
+                              }
+                        };
+                            
+          document.addEventListener("AR.DataSetLoadedEvent", artExploreController.onDataSetLoaded);
+          document.addEventListener("AR.DataSetActivatedEvent", artExploreController.onDataSetActivated);
+          document.addEventListener("AR.ArgonReadyEvent", artExploreController.onArgonReady);
 			
         </script>
+        
+        <div id="commentList"></div>
     </body>
     
     
