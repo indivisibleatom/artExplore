@@ -22,7 +22,7 @@ function tryHandle(request, response)
     });
 
     connection.connect();
-    var query = "SELECT COMMENT, LIKES from test.MURAL_COMMENTS where ID = " + queryData.ID + " and GRIDX = " + queryData.gridX + " and GRIDY = " + queryData.gridY + " and GRIDZ = " + queryData.gridZ;
+    var query = "SELECT COMMENT_ID, COMMENT, LIKES from test.MURAL_COMMENTS where ID = " + queryData.ID + " and GRIDX = " + queryData.gridX + " and GRIDY = " + queryData.gridY + " and GRIDZ = " + queryData.gridZ;
     connection.query(query, function(err, rows) {
       if (err)
       {
@@ -32,7 +32,6 @@ function tryHandle(request, response)
       {
         var string = JSON.stringify(rows);
         console.log("Got response comment query " + query);
-        console.log(string);
         response.write(string);
         response.end();
       }
@@ -64,7 +63,7 @@ function tryHandle(request, response)
     });
 
     connection.connect();
-    var query = "SELECT * from test.MURAL_INFO where LATITUDE between " + latLow + " and " + latHigh + " and LONGITUDE between " + longLow + " and " + longHigh;
+    var query = "SELECT XML_URL, IMAGE_WIDTH, IMAGE_HEIGHT, X_SIZE, Y_SIZE from test.MURAL_INFO where LATITUDE between " + latLow + " and " + latHigh + " and LONGITUDE between " + longLow + " and " + longHigh;
     connection.query(query, function(err, rows) {
       if (err)
       {
@@ -73,7 +72,7 @@ function tryHandle(request, response)
       if (rows.length >= 1)
       {
         console.log("Got response for geolocation query " + query);
-        response.write(JSON.stringify({"xml":rows[0].XML_URL}));
+        response.write(JSON.stringify(rows[0]));
         response.end();
       }
     });
@@ -96,7 +95,7 @@ function tryHandle(request, response)
     });
 
     connection.connect();
-    var query = "SELECT * from test.MURAL_INFO where ID = " + queryData.ID;
+    var query = "SELECT XML_URL, IMAGE_WIDTH, IMAGE_HEIGHT, X_SIZE, Y_SIZE from test.MURAL_INFO where ID = " + queryData.ID;
     connection.query(query, function(err, rows) {
       if (err)
       {
@@ -105,7 +104,7 @@ function tryHandle(request, response)
       if (rows.length >= 1)
       {
         console.log("Got response for geolocation query " + query);
-        response.write(JSON.stringify({"xml":rows[0].XML_URL}));
+        response.write(JSON.stringify(rows[0]));
         response.end();
       }
     });
@@ -124,6 +123,33 @@ function tryHandle(request, response)
     }
   }
   
+  function handleIncreaseLikeCount(request, response)
+  {
+    var queryData = url.parse(request.url, true).query;
+    console.log("Increasing like count" + request.url);
+    
+    //TODO msati3: move to common location for db services
+    var services = process.env.VCAP_SERVICES;
+    var serviceReply = JSON.parse(services);
+    var creds = serviceReply["mysql-5.1"][0].credentials;
+    var connection = mysql.createConnection({
+        host     : creds.hostname,
+        user     : creds.user,
+        port     : creds.port,
+        password : creds.password,
+    });
+
+    connection.connect();
+    var query = "UPDATE test.MURAL_COMMENTS set LIKES=LIKES+1 where COMMENT_ID = " + queryData.ID;
+    connection.query(query, function(err, rows) {
+      if (err)
+      {
+        throw err;
+      }
+      response.end();
+    });
+  }
+  
   var uri = url.parse(request.url).pathname;
   if (uri == "/getComment")
   {
@@ -132,6 +158,10 @@ function tryHandle(request, response)
   else if (uri == "/getMuralInfo")
   {
     handleGetMuralInfo(request, response);
+  }
+  else if (uri == "/increaseLikeCount")
+  {
+    handleIncreaseLikeCount(request, response);
   }
   else //Can't handle via dynamic routing
   {

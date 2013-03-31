@@ -1,1 +1,2 @@
-delete FROM MURAL_COMMENTS where id = 0;
+SET SQL_SAFE_UPDATES=0;
+delete FROM test.MURAL_COMMENTS where id = 1;
