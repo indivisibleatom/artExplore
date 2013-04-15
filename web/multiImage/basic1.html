@@ -137,7 +137,6 @@
                                   }
                                   
                                   xmlhttp.open("GET","/getMuralInfo?ID=2", true);
-                                  //xmlhttp.open("GET","/getMuralInfo?lat="+position.coords.latitude+"&long="+position.coords.longitude, true);
                                   xmlhttp.send();                                  
                                 });
                               }
@@ -145,15 +144,34 @@
             
             onCommentDialogDismissed : function(commentSubmission)
                            {
-                              //Send comment
+                              if (navigator.geolocation)
+                              {
+                                  navigator.geolocation.getCurrentPosition(function(position){
+                                  xmlhttp = new XMLHttpRequest();
+                                  
+                                  xmlhttp.onreadystatechange=function()
+                                  {
+                                    if (xmlhttp.readyState==4 && xmlhttp.status==200)
+                                    {                                  
+                                      JSLOG.log("Added comment ");
+                                    }
+                                  }
+                                  
+                                  var query = "?muralID="+commentSubmission.muralID+"&comment="+commentSubmission.comment+"&imgX="+commentSubmission.commentImgX+
+                                                 "&imgY="+commentSubmission.commentImgY+"&imgZ="+commentSubmission.commentImgZ+"&gridX="+commentSubmission.commentCellX
+                                                 +"&gridY="+commentSubmission.commentCellY+"&gridZ="+commentSubmission.commentCellZ;
+                                  xmlhttp.open("GET","/addComment"+query, true);
+                                  xmlhttp.send();                                  
+                                });
+                              }
                            },
             
             onCommentAdd : function(x, y, levelOfDetail)
                            {
                               //showCommentDialog();
                               var commentText = "This is a comment";
-                              /*onCommentDialogDismissed({muralID: , comment: commentText, commentImgX: , commentImgY: ,
-                                                        commentCellX: , commentCellY: , commentCellY: , cameraLocationX}); */
+                              artExploreController.onCommentDialogDismissed({muralID: artExploreState.muralInfo.ID, comment: commentText, commentImgX: x, commentImgY: y, commentImgZ: 0,
+                                                        commentCellX: currentGrid.X, commentCellY: currentGrid.Y, commentCellZ: 1});
                               
                            },
                            
@@ -161,7 +179,10 @@
                            {
                               var x = event.targetTouches[0].pageX;
                               var y = event.targetTouches[0].pageY;
-                              alert("Touched " + x + " " + y);
+                              if (currentGrid.X != -1)
+                              {
+                                artExploreController.onCommentAdd(x, y, 1);
+                              }
                            },
 
             onArgonReady : function()
@@ -187,6 +208,9 @@
 
                                       ARGON.onRender = artExploreController.onRender;
                                       window.setInterval(artExploreController.checkSameGrid,2000);
+                                      document.body.addEventListener("touchmove", function(event) { event.preventDefault(); }, false);
+                                      document.body.addEventListener("touchstart", function(event) { artExploreController.onTouch(event); }, false);
+                                      document.getElementById("commentList").addEventListener("touchstart", function(event) { event.stopPropagation(); }, false);
                                   }
                               }
                         };
@@ -194,9 +218,6 @@
           document.addEventListener("AR.DataSetLoadedEvent", artExploreController.onDataSetLoaded);
           document.addEventListener("AR.DataSetActivatedEvent", artExploreController.onDataSetActivated);
           document.addEventListener("AR.ArgonReadyEvent", artExploreController.onArgonReady);
-          document.body.addEventListener("touchmove", function(event) { event.preventDefault(); }, false);
-          document.body.addEventListener("touchbegin", function(event) { artExploreController.onTouch(event); }, false);
-			
         </script>
         
         <div id="commentList">
