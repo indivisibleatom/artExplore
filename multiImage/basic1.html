@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="en">
     <head>
-        <title>Argon Basic Yippee</title>
+        <title>ArtExplore 1</title>
         <link rel="apple-touch-icon" href="assets/sample_icon_57x57.png" />
         <link rel="stylesheet" href="css/jslog.css" />
         <link rel="stylesheet" media="all and (orientation:portrait)" href="css/portrait.css">
@@ -10,7 +10,7 @@
         <meta name="arenabled" />
     </head>
     <body>
-	      <!--<script src="js/jslog.js"></script>-->
+	      <script src="js/jslog.js"></script>
         <script src="http://argon.gatech.edu/argon_o.js"></script>
         <script>
             var dataset, stonesTarget, trackedObject;
@@ -68,8 +68,8 @@
                                   document.getElementById("commentList").innerHTML = innerHtmlString;
                                 }
                               }
-                              //JSLOG.log(grid.X + " " + grid.Y);
-                              xmlhttp.open("GET","/getComment?ID=1&gridX="+grid.X+"&gridY="+grid.Y+"&gridZ=1", true);
+                              JSLOG.log(grid.X + " " + grid.Y + " " + artExploreState.muralInfo.ID);
+                              xmlhttp.open("GET","/getComment?ID="+artExploreState.muralInfo.ID+"&gridX="+grid.X+"&gridY="+grid.Y+"&gridZ=1", true);
                               xmlhttp.send();
                             },
             
@@ -130,15 +130,38 @@
                                     {                                  
                                       var muralInfo = JSON.parse(xmlhttp.responseText);
                                       artExploreState.muralInfo = muralInfo;
+                                      JSLOG.log("Loading dataset " + artExploreState.muralInfo.XML_URL);
+
                                       ARGON.loadDataset(artExploreState.muralInfo.XML_URL);
                                     }
                                   }
                                   
-                                  xmlhttp.open("GET","/getMuralInfo?ID=1", true);
+                                  xmlhttp.open("GET","/getMuralInfo?ID=2", true);
                                   //xmlhttp.open("GET","/getMuralInfo?lat="+position.coords.latitude+"&long="+position.coords.longitude, true);
                                   xmlhttp.send();                                  
                                 });
                               }
+                           },
+            
+            onCommentDialogDismissed : function(commentSubmission)
+                           {
+                              //Send comment
+                           },
+            
+            onCommentAdd : function(x, y, levelOfDetail)
+                           {
+                              //showCommentDialog();
+                              var commentText = "This is a comment";
+                              /*onCommentDialogDismissed({muralID: , comment: commentText, commentImgX: , commentImgY: ,
+                                                        commentCellX: , commentCellY: , commentCellY: , cameraLocationX}); */
+                              
+                           },
+                           
+            onTouch : function(event)
+                           {
+                              var x = event.targetTouches[0].pageX;
+                              var y = event.targetTouches[0].pageY;
+                              alert("Touched " + x + " " + y);
                            },
 
             onArgonReady : function()
@@ -148,11 +171,14 @@
              
             onDataSetLoaded : function(event)
                               {                  
+                                  //TODO msati3: Parse this
                                   dataset      = event.dataset;
                                   stonesTarget = dataset.targets["vendingCube"];
 
                                   if (stonesTarget)
                                   {
+                                      JSLOG.log("Loaded and found trackedObject");
+
                                       trackedObject        = new ARGON.TrackedObject();
                                       trackedObject.name   = "vendingMainTarget"; 
 
@@ -168,6 +194,8 @@
           document.addEventListener("AR.DataSetLoadedEvent", artExploreController.onDataSetLoaded);
           document.addEventListener("AR.DataSetActivatedEvent", artExploreController.onDataSetActivated);
           document.addEventListener("AR.ArgonReadyEvent", artExploreController.onArgonReady);
+          document.body.addEventListener("touchmove", function(event) { event.preventDefault(); }, false);
+          document.body.addEventListener("touchbegin", function(event) { artExploreController.onTouch(event); }, false);
 			
         </script>
         
