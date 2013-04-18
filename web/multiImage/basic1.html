@@ -136,7 +136,7 @@
                                     }
                                   }
                                   
-                                  xmlhttp.open("GET","/getMuralInfo?ID=2", true);
+                                  xmlhttp.open("GET","/getMuralInfo?ID=3", true);
                                   xmlhttp.send();                                  
                                 });
                               }
@@ -194,14 +194,14 @@
                               {                  
                                   //TODO msati3: Parse this
                                   dataset      = event.dataset;
-                                  stonesTarget = dataset.targets["vendingCube"];
+                                  stonesTarget = dataset.targets[artExploreState.muralInfo.MULTI_TARGET];
 
                                   if (stonesTarget)
                                   {
                                       JSLOG.log("Loaded and found trackedObject");
 
                                       trackedObject        = new ARGON.TrackedObject();
-                                      trackedObject.name   = "vendingMainTarget"; 
+                                      trackedObject.name   = "multiTarget"; 
 
                                       trackedObject.autoHideAfterFrames = 1;
                                       trackedObject.setTarget( stonesTarget );

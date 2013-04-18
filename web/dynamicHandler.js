@@ -89,7 +89,7 @@ function tryHandle(request, response)
     });
 
     connection.connect();
-    var query = "SELECT XML_URL, IMAGE_WIDTH, IMAGE_HEIGHT, X_SIZE, Y_SIZE from test.MURAL_INFO where LATITUDE between " + latLow + " and " + latHigh + " and LONGITUDE between " + longLow + " and " + longHigh;
+    var query = "SELECT ID, MULTI_TARGET, XML_URL, IMAGE_WIDTH, IMAGE_HEIGHT, X_SIZE, Y_SIZE from test.MURAL_INFO where LATITUDE between " + latLow + " and " + latHigh + " and LONGITUDE between " + longLow + " and " + longHigh;
     connection.query(query, function(err, rows) {
       if (err)
       {
@@ -122,7 +122,7 @@ function tryHandle(request, response)
     });
 
     connection.connect();
-    var query = "SELECT ID, XML_URL, IMAGE_WIDTH, IMAGE_HEIGHT, X_SIZE, Y_SIZE from test.MURAL_INFO where ID = " + queryData.ID;
+    var query = "SELECT ID, MULTI_TARGET, XML_URL, IMAGE_WIDTH, IMAGE_HEIGHT, X_SIZE, Y_SIZE from test.MURAL_INFO where ID = " + queryData.ID;
     connection.query(query, function(err, rows) {
       if (err)
       {
