@@ -93,6 +93,7 @@
                            {                              
                               if (stonesTarget._visible)
                               {
+                                   JSLOG.log("Visible");
                                    var newCurrent = artExploreController.getCurrentGrid();
                                    if (newCurrent.X == currentGrid.X && newCurrent.Y == currentGrid.Y)
                                    {
@@ -136,7 +137,7 @@
                                     }
                                   }
                                   
-                                  xmlhttp.open("GET","/getMuralInfo?ID=3", true);
+                                  xmlhttp.open("GET","/getMuralInfo?ID=5", true);
                                   xmlhttp.send();                                  
                                 });
                               }

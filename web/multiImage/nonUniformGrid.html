@@ -1,0 +1,249 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <title>Argon Basic Yippee</title>
+        <link rel="apple-touch-icon" href="assets/sample_icon_57x57.png" />
+        <link rel="stylesheet" href="css/jslog.css" />
+        <link rel="stylesheet" media="all and (orientation:portrait)" href="css/portrait.css">
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
+        <meta name="arenabled" />
+    </head>
+    <body>
+	    <script src="js/jslog.js"></script>
+        <script src="http://argon.gatech.edu/argon_o.js"></script>
+        <script>
+            var dataset, stonesTarget, trackedObject;
+            var redCube, redMaterial, redGeometry;
+            var currentGrid = {X : -1, Y : -1, Z : -1}, prevGrid = {X : -1, Y : -1, Z : -1};
+            
+            var artExploreState =
+            {
+			  gridZSize: null,
+              muralInfo: null,
+              muralComment: null
+            }
+
+            var artExploreController =
+            {   
+            onRender : function()
+                       {
+							if (stonesTarget._visible)
+							{
+							  //JSLOG.log(trackedObject.threeObject3D.matrix.decompose()[0].x + "," + trackedObject.threeObject3D.matrix.decompose()[0].y); 
+							  //JSLOG.log(trackedObject.threeObject3D.matrix.decompose()[0].x + " " + trackedObject.threeObject3D.matrix.decompose()[0].z); 
+							}
+						},
+            
+			/****************************************************
+			 Identify the X-Grid, Y-Grid, Z-Grid that is being 
+			 currently looked at
+			 ****************************************************/
+            getCurrentGrid: function()
+                           {
+                              if (artExploreState.muralInfo != null)
+                              {
+								/****************************************************
+								 Compute the size (X,Y,Z) of the smallest grid
+								 ****************************************************/
+                                var gridXSize = artExploreState.muralInfo.IMAGE_WIDTH/artExploreState.muralInfo.X_SIZE;
+                                var gridYSize = artExploreState.muralInfo.IMAGE_HEIGHT/artExploreState.muralInfo.Y_SIZE;
+                                var gridZSize = artExploreState.gridZSize;
+
+                                //TODO msati3: Handle camera rotations as well?
+                                
+								//JSLOG.log("Grid.X: " + gridX + "   X:" + trackedObject.threeObject3D.matrix.decompose()[0].x);
+                                //JSLOG.log("Grid.X.size: " + gridXSize);
+
+								/****************************************************
+								 Identify the X-Grid that is being currently looked at
+								 Set it to -1 if it is invalid
+								 ****************************************************/
+                                var gridX = Math.floor(trackedObject.threeObject3D.matrix.decompose()[0].x/gridXSize);
+                                //JSLOG.log(gridX + " " + gridXSize + " " + artExploreState.muralInfo.IMAGE_WIDTH + " " + artExploreState.muralInfo.X_SIZE);
+								gridX = gridX < 0 ? -1 : gridX;
+                                gridX = gridX >= gridXSize? -1 : gridX;
+                                
+								/****************************************************
+								 Identify the Y-Grid that is being currently looked at
+								 Set it to -1 if it is invalid
+								 ****************************************************/
+								var gridY = Math.floor(trackedObject.threeObject3D.matrix.decompose()[0].y/gridYSize);
+                                //JSLOG.log("Grid.Y: " + gridY + "   Y:" + trackedObject.threeObject3D.matrix.decompose()[0].y);
+                                //JSLOG.log("Grid.Y.size: " + gridYSize);
+                                gridY = gridY < 0 ? -1 : gridY;
+                                gridY = gridY >= gridYSize? -1 : gridY;
+                                
+								/***********************************
+								 Compute the Z-Grid value based on the
+								 TRANSLATION.Z using the Z-Grid Size.
+								 We also subtract (Z-Grid Size/2) from the
+								 translation to add a small buffer
+								 ***********************************/
+								var gridZ = trackedObject.threeObject3D.matrix.decompose()[0].z-gridZSize/2;
+								gridZ=Math.floor(gridZ/gridZSize);
+                                //JSLOG.log("GridX: " + gridX + "GridY: " + gridY + "GridZ: " + gridZ);
+                                return {X : gridX, Y : gridY, Z : gridZ};
+                              }
+                           },
+             
+			/****************************************************
+			 Fetches the list of comments and likes and displays
+			 them
+			 ****************************************************/
+            makeCommentRequest: function(grid)
+                           {
+                              xmlhttp = new XMLHttpRequest();
+                              xmlhttp.onreadystatechange=function()
+                              {
+                                if (xmlhttp.readyState==4 && xmlhttp.status==200)
+                                {
+                                  var result=JSON.parse(xmlhttp.responseText);
+                                  artExploreState.muralComment = {};
+                                  var innerHtmlString = "<table>";
+                                  for (var i = 0; i < result.length; i++)
+                                  {
+                                    var likeId="commentLike"+i;
+                                    innerHtmlString += "<tr class='comment'><td class='commentText'>" + result[i].COMMENT + "</td><td id="+likeId+" class='commentLike' onclick='artExploreController.onLikeClicked("+i+")'>" + result[i].LIKES + "</td></tr>";
+                                    artExploreState.muralComment[i] = result[i].COMMENT_ID;
+                                  }
+                                  innerHtmlString += "</table>"
+                                  document.getElementById("commentList").innerHTML = innerHtmlString;
+                                }
+                              }
+                              JSLOG.log(grid.X + " " + grid.Y);
+                              xmlhttp.open("GET","/getComment?ID=1&gridX="+grid.X+"&gridY="+grid.Y+"&gridZ="+grid.Z, true);
+                              xmlhttp.send();
+                            },
+            
+			/****************************************************
+			 Updates the number of likes on tap event
+			 ****************************************************/
+            onLikeClicked: function(index)
+                          {
+                              var currentLike = parseInt(document.getElementById("commentLike"+index).innerHTML);
+                              document.getElementById("commentLike"+index).innerHTML = currentLike+1;
+                              xmlhttp = new XMLHttpRequest();
+
+                              xmlhttp.open("GET","/increaseLikeCount?ID="+artExploreState.muralComment[index], true);
+                              xmlhttp.send();                                  
+                          },
+            
+			/****************************************************
+			 Resets the comments back to blank
+			 ****************************************************/
+            onExploringImage: function()
+                          {
+                              artExploreState.muralComment = null;
+                              document.getElementById("commentList").innerHTML = "";
+                          },
+
+			/****************************************************
+			 This function checks if the current grid being
+			 tracked is the same as the previous grid. In case it
+			 is, then we get comments for it using the onExploreImage()
+			 ****************************************************/
+            checkSameGrid : function()
+                           {                              
+                              if (stonesTarget._visible)
+                              {
+                                   var newCurrent = artExploreController.getCurrentGrid();
+                                   if (newCurrent.X == currentGrid.X && newCurrent.Y == currentGrid.Y && newCurrent.Z == currentGrid.Z)
+                                   {
+                                      if ((currentGrid.X != prevGrid.X) || (currentGrid.Y != prevGrid.Y) || (currentGrid.Z != prevGrid.Z)) 
+                                      {
+                                        artExploreController.makeCommentRequest(newCurrent);
+                                      }
+                                   }
+                                   else
+                                   {
+                                        artExploreController.onExploringImage();
+                                   }
+                                   prevGrid = currentGrid;
+                                   currentGrid = newCurrent;
+                              }
+                              else
+                              {
+                                prevGrid = currentGrid;
+                                currentGrid.X = -1;
+                                currentGrid.Y = -1;
+                                currentGrid.Z = -1;
+                                artExploreController.onExploringImage();
+                              }
+                           },
+            
+            makeDataSetRequest : function()
+                           {
+                              if (navigator.geolocation)
+                              {
+                                  navigator.geolocation.getCurrentPosition(function(position){
+                                  xmlhttp = new XMLHttpRequest();
+                                  
+                                  xmlhttp.onreadystatechange=function()
+                                  {
+                                    if (xmlhttp.readyState==4 && xmlhttp.status==200)
+                                    {                             
+									  /***********************************
+									   Copy the MURAL_INFO table returned in
+									   the JSON to the artExploreState
+									   ***********************************/
+                                      var muralInfo = JSON.parse(xmlhttp.responseText);
+                                      artExploreState.muralInfo = muralInfo;
+									  
+									  /***********************************
+									   Compute the length of the Z for the 
+									   smallest cells
+									   ***********************************/
+									  var gridXSize = artExploreState.muralInfo.IMAGE_WIDTH/artExploreState.muralInfo.X_SIZE;
+									  var FoV = 43.2*Math.PI/180;
+									  artExploreState.gridZSize = gridXSize/Math.tan(FoV); 
+									  //JSLOG.log("GridZSize : " + artExploreState.gridZSize);
+                                      
+									  
+									  //ARGON.loadDataset(artExploreState.muralInfo.XML_URL);
+									  ARGON.loadDataset("https://dl.dropbox.com/u/807414/multiImage/Main_Project.xml");
+                                    }
+                                  }
+                                  
+                                  xmlhttp.open("GET","/getMuralInfo?ID=1", true);
+                                  //xmlhttp.open("GET","/getMuralInfo?lat="+position.coords.latitude+"&long="+position.coords.longitude, true);
+                                  xmlhttp.send();                                  
+                                });
+                              }
+                           },
+
+            onArgonReady : function()
+                           {
+                               artExploreController.makeDataSetRequest();                               
+                           },
+             
+            onDataSetLoaded : function(event)
+                              {                  
+                                  dataset      = event.dataset;
+                                  stonesTarget = dataset.targets["vendingCube"];
+
+                                  if (stonesTarget)
+                                  {
+                                      trackedObject        = new ARGON.TrackedObject();
+                                      trackedObject.name   = "vendingMainTarget"; 
+
+                                      trackedObject.autoHideAfterFrames = 1;
+                                      trackedObject.setTarget( stonesTarget );
+
+                                      ARGON.onRender = artExploreController.onRender;
+                                      window.setInterval(artExploreController.checkSameGrid,2000);
+                                  }
+                              }
+                        };
+                            
+          document.addEventListener("AR.DataSetLoadedEvent", artExploreController.onDataSetLoaded);
+          document.addEventListener("AR.DataSetActivatedEvent", artExploreController.onDataSetActivated);
+          document.addEventListener("AR.ArgonReadyEvent", artExploreController.onArgonReady);
+			
+        </script>
+        
+        <div id="commentList">
+    </body>
+    
+    
+</html>            

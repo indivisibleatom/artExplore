@@ -303,6 +303,7 @@ function tryHandle(request, response)
       var zsize = parseInt(queryData.Z_SIZE);
       var width = parseInt(queryData.WIDTH);
       var height = parseInt(queryData.HEIGHT);
+      var multiImageName = "'"+queryData.MULTI_IMAGE+"'";
       
       //TODO msati3: move to common location for db services
       var services = process.env.VCAP_SERVICES;
@@ -316,8 +317,8 @@ function tryHandle(request, response)
       });
 
       connection.connect();
-      var query = "INSERT into test.MURAL_INFO (XML_URL, LATITUDE, LONGITUDE, X_SIZE, Y_SIZE, Z_SIZE, IMAGE_WIDTH, IMAGE_HEIGHT) VALUES ("+
-                                                xmlurl+","+latitude+","+longitude+","+xsize+","+ysize+","+zsize+","+width+","+height+")";
+      var query = "INSERT into test.MURAL_INFO (XML_URL, MULTI_TARGET, LATITUDE, LONGITUDE, X_SIZE, Y_SIZE, Z_SIZE, IMAGE_WIDTH, IMAGE_HEIGHT) VALUES ("+
+                                                xmlurl+","+multiImageName+","+latitude+","+longitude+","+xsize+","+ysize+","+zsize+","+width+","+height+")";
       console.log("Insert query is " + query);
       connection.query(query);
       response.writeHead(200, "OK", {'Content-Type': 'text/html'});

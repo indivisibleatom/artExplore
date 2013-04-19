@@ -188,7 +188,7 @@ namespace DataCreator
                 requestStream.Write(tempBuffer, 0, tempBuffer.Length);
                 requestStream.Close();
 
-                url = "http://localhost:8888/updateDBs?LATITUDE="+textBox1.Text+"&LONGITUDE="+textBox2.Text+"&X_SIZE="+textBox5.Text+"&Y_SIZE="+textBox6.Text+"&Z_SIZE="+textBox7.Text+"&WIDTH="+textBox3.Text+"&HEIGHT="+textBox4.Text;
+                url = "http://localhost:8888/updateDBs?LATITUDE="+textBox1.Text+"&LONGITUDE="+textBox2.Text+"&X_SIZE="+textBox5.Text+"&Y_SIZE="+textBox6.Text+"&Z_SIZE="+textBox7.Text+"&WIDTH="+textBox3.Text+"&HEIGHT="+textBox4.Text+"&MULTI_IMAGE="+m_multiImageName;
                 httpWebRequest = (HttpWebRequest)WebRequest.Create(url);
                 httpWebRequest.Method = "GET";
                 httpWebRequest.KeepAlive = true;
