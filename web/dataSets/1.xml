@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<QCARConfig>
+    <Tracking>
+        <ImageTarget size="200 200" name="vendingCube.Left"/>
+        <ImageTarget size="200 200" name="vendingCube.Right"/>
+        <ImageTarget size="200 200" name="vendingCube.Front"/>
+        <MultiTarget name="vendingCube">
+            <Part rotation="AD: 0 1 0 0" translation="100 100 0" name="vendingCube.Left"/>
+            <Part rotation="AD: 0 1 0 0" translation="300 100 0" name="vendingCube.Front"/>
+            <Part rotation="AD: 0 1 0 0" translation="500 100 0" name="vendingCube.Right"/>
+        </MultiTarget>
+    </Tracking>
+</QCARConfig>

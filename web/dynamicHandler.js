@@ -36,6 +36,7 @@ function tryHandle(request, response)
         response.write(string);
         response.end();
       }
+      connection.end();
     });
   }
   
@@ -62,6 +63,7 @@ function tryHandle(request, response)
     connection.query(query);
     response.writeHead(200, "OK", {'Content-Type': 'text/html'});
     response.end();
+    connection.end();
   }
   
   function handleGetMuralInfoByGeoLocation(request, response)
@@ -102,6 +104,7 @@ function tryHandle(request, response)
         response.write(JSON.stringify(rows[0]));
         response.end();
       }
+      connection.end();
     });
   }
   
@@ -135,6 +138,7 @@ function tryHandle(request, response)
         response.write(JSON.stringify(rows[0]));
         response.end();
       }
+      connection.end();
     });
   }
   
@@ -176,6 +180,7 @@ function tryHandle(request, response)
       }
       response.writeHead(200, "OK", {'Content-Type': 'text/html'});
       response.end();
+      connection.end();
     });
   }
   
@@ -218,16 +223,6 @@ function tryHandle(request, response)
     if (request.method == 'POST') {
       console.log("[200] " + request.method + " to " + request.url);
         
-    var services = process.env.VCAP_SERVICES;
-    var serviceReply = JSON.parse(services);
-    var creds = serviceReply["mysql-5.1"][0].credentials;
-    var connection = mysql.createConnection({
-        host     : creds.hostname,
-        user     : creds.user,
-        port     : creds.port,
-        password : creds.password,
-    });
-
       request.on('data', function(chunk) {
         console.log("Received body data:");
         console.log(chunk.toString());
@@ -283,6 +278,7 @@ function tryHandle(request, response)
         var retID = parseInt(rows[0].MAXID) + 1;
         callBack(retID);
       }
+      connection.end();
     });
   }
   
@@ -320,7 +316,9 @@ function tryHandle(request, response)
       var query = "INSERT into test.MURAL_INFO (XML_URL, MULTI_TARGET, LATITUDE, LONGITUDE, X_SIZE, Y_SIZE, Z_SIZE, IMAGE_WIDTH, IMAGE_HEIGHT) VALUES ("+
                                                 xmlurl+","+multiImageName+","+latitude+","+longitude+","+xsize+","+ysize+","+zsize+","+width+","+height+")";
       console.log("Insert query is " + query);
-      connection.query(query);
+      connection.query(query, function() {
+            connection.end();
+      });
       response.writeHead(200, "OK", {'Content-Type': 'text/html'});
       response.end();
     }

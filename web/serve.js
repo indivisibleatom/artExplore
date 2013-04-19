@@ -22,7 +22,7 @@ function start(route)
 
       if (fs.statSync(filename).isDirectory()) 
       {
-        filename += 'basic1.html';
+        filename += 'nonUniformGrid.html';
       }
 
       fs.readFile(filename, "binary", function(err, file) {

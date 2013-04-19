@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="en">
     <head>
-        <title>Argon Basic Yippee</title>
+        <title>ArtExplore 2</title>
         <link rel="apple-touch-icon" href="assets/sample_icon_57x57.png" />
         <link rel="stylesheet" href="css/jslog.css" />
         <link rel="stylesheet" media="all and (orientation:portrait)" href="css/portrait.css">
@@ -68,7 +68,7 @@
 								 Identify the Y-Grid that is being currently looked at
 								 Set it to -1 if it is invalid
 								 ****************************************************/
-								var gridY = Math.floor(trackedObject.threeObject3D.matrix.decompose()[0].y/gridYSize);
+								var gridY = Math.floor(-trackedObject.threeObject3D.matrix.decompose()[0].y/gridYSize);
                                 //JSLOG.log("Grid.Y: " + gridY + "   Y:" + trackedObject.threeObject3D.matrix.decompose()[0].y);
                                 //JSLOG.log("Grid.Y.size: " + gridYSize);
                                 gridY = gridY < 0 ? -1 : gridY;
@@ -82,7 +82,7 @@
 								 ***********************************/
 								var gridZ = trackedObject.threeObject3D.matrix.decompose()[0].z-gridZSize/2;
 								gridZ=Math.floor(gridZ/gridZSize);
-                                //JSLOG.log("GridX: " + gridX + "GridY: " + gridY + "GridZ: " + gridZ);
+                                JSLOG.log("GridX: " + gridX + "GridY: " + gridY + "GridZ: " + gridZ);
                                 return {X : gridX, Y : gridY, Z : gridZ};
                               }
                            },
@@ -172,6 +172,14 @@
                               }
                            },
             
+            resetImageGridOnAdd : function()
+                           {
+                               prevGrid = currentGrid;
+                               currentGrid.X = -1;
+                               currentGrid.Y = -1;
+                               artExploreController.onExploringImage();
+                           },
+            
             makeDataSetRequest : function()
                            {
                               if (navigator.geolocation)
@@ -200,8 +208,7 @@
 									  //JSLOG.log("GridZSize : " + artExploreState.gridZSize);
                                       
 									  
-									  //ARGON.loadDataset(artExploreState.muralInfo.XML_URL);
-									  ARGON.loadDataset("https://dl.dropbox.com/u/807414/multiImage/Main_Project.xml");
+									  ARGON.loadDataset(artExploreState.muralInfo.XML_URL);
                                     }
                                   }
                                   
@@ -209,6 +216,49 @@
                                   //xmlhttp.open("GET","/getMuralInfo?lat="+position.coords.latitude+"&long="+position.coords.longitude, true);
                                   xmlhttp.send();                                  
                                 });
+                              }
+                           },
+            
+            onCommentDialogDismissed : function(commentSubmission)
+                           {
+                              if (navigator.geolocation)
+                              {
+                                  navigator.geolocation.getCurrentPosition(function(position){
+                                  xmlhttp = new XMLHttpRequest();
+                                  
+                                  xmlhttp.onreadystatechange=function()
+                                  {
+                                    if (xmlhttp.readyState==4 && xmlhttp.status==200)
+                                    {                                  
+                                      JSLOG.log("Added comment ");
+                                    }
+                                  }
+                                  
+                                  var query = "?muralID="+commentSubmission.muralID+"&comment="+commentSubmission.comment+"&imgX="+commentSubmission.commentImgX+
+                                                 "&imgY="+commentSubmission.commentImgY+"&imgZ="+commentSubmission.commentImgZ+"&gridX="+commentSubmission.commentCellX
+                                                 +"&gridY="+commentSubmission.commentCellY+"&gridZ="+commentSubmission.commentCellZ;
+                                  xmlhttp.open("GET","/addComment"+query, true);
+                                  xmlhttp.send();                                  
+                                });
+                              }
+                           },
+            
+            onCommentAdd : function(x, y, levelOfDetail)
+                           {
+                              //showCommentDialog();
+                              var commentText = prompt("Enter comment");
+                              artExploreController.onCommentDialogDismissed({muralID: artExploreState.muralInfo.ID, comment: commentText, commentImgX: x, commentImgY: y, commentImgZ: 0,
+                                                        commentCellX: currentGrid.X, commentCellY: currentGrid.Y, commentCellZ: 1});
+                              artExploreController.resetImageGridOnAdd();
+                           },
+                           
+            onTouch : function(event)
+                           {
+                              var x = event.targetTouches[0].pageX;
+                              var y = event.targetTouches[0].pageY;
+                              if (currentGrid.X != -1)
+                              {
+                                artExploreController.onCommentAdd(x, y, 1);
                               }
                            },
 
@@ -220,7 +270,7 @@
             onDataSetLoaded : function(event)
                               {                  
                                   dataset      = event.dataset;
-                                  stonesTarget = dataset.targets["vendingCube"];
+                                  stonesTarget = dataset.targets[artExploreState.muralInfo.MULTI_TARGET];
 
                                   if (stonesTarget)
                                   {
@@ -232,6 +282,9 @@
 
                                       ARGON.onRender = artExploreController.onRender;
                                       window.setInterval(artExploreController.checkSameGrid,2000);
+                                      document.body.addEventListener("touchmove", function(event) { event.preventDefault(); }, false);
+                                      document.body.addEventListener("touchstart", function(event) { artExploreController.onTouch(event); }, false);
+                                      document.getElementById("commentList").addEventListener("touchstart", function(event) { event.stopPropagation(); }, false);
                                   }
                               }
                         };

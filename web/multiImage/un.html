@@ -117,6 +117,14 @@
                                 artExploreController.onExploringImage();
                               }
                            },
+                           
+            resetImageGridOnAdd : function()
+                           {
+                               prevGrid = currentGrid;
+                               currentGrid.X = -1;
+                               currentGrid.Y = -1;
+                               artExploreController.onExploringImage();
+                           },
             
             makeDataSetRequest : function()
                            {
@@ -137,7 +145,7 @@
                                     }
                                   }
                                   
-                                  xmlhttp.open("GET","/getMuralInfo?ID=5", true);
+                                  xmlhttp.open("GET","/getMuralInfo?ID=2", true);
                                   xmlhttp.send();                                  
                                 });
                               }
@@ -170,9 +178,10 @@
             onCommentAdd : function(x, y, levelOfDetail)
                            {
                               //showCommentDialog();
-                              var commentText = "This is a comment";
+                              var commentText = prompt("Enter comment");
                               artExploreController.onCommentDialogDismissed({muralID: artExploreState.muralInfo.ID, comment: commentText, commentImgX: x, commentImgY: y, commentImgZ: 0,
                                                         commentCellX: currentGrid.X, commentCellY: currentGrid.Y, commentCellZ: 1});
+                              artExploreController.resetImageGridOnAdd();
                               
                            },
                            
@@ -202,7 +211,7 @@
                                       JSLOG.log("Loaded and found trackedObject");
 
                                       trackedObject        = new ARGON.TrackedObject();
-                                      trackedObject.name   = "multiTarget"; 
+                                      trackedObject.name   = "multiTarget";
 
                                       trackedObject.autoHideAfterFrames = 1;
                                       trackedObject.setTarget( stonesTarget );
