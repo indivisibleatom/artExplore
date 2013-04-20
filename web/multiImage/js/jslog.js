@@ -114,7 +114,7 @@ JSLOG = {
 
 
 	log: function(message) {
-		//var out = JSLOG.outputBlock(message);
+		var out = JSLOG.outputBlock(message);
 	},
 
 
@@ -136,4 +136,4 @@ JSLOG = {
 };
 
 
-//JSLOG.init();
+JSLOG.init();

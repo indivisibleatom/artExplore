@@ -16,12 +16,12 @@ namespace DataCreator
     {
         string m_filePath;
         private string m_multiImageName;
-        private int m_width;
-        private int m_height;
+        private float m_width;
+        private float m_height;
         private int m_numRows;
         private int m_numCols;
-        private int m_sizeGridX;
-        private int m_sizeGridY;
+        private float m_sizeGridX;
+        private float m_sizeGridY;
 
         public SpecifyImageParameters(string path)
         {
@@ -32,8 +32,8 @@ namespace DataCreator
 
         private string getTranslationFor(int row, int column)
         {
-            int x = m_sizeGridX / 2 + column * m_sizeGridX;
-            int y = m_sizeGridY / 2 + row * m_sizeGridY;
+            float x = m_sizeGridX / 2 + column * m_sizeGridX;
+            float y = m_sizeGridY / 2 + row * m_sizeGridY;
             return x.ToString() + " " + y.ToString() + " 0";
         }
 
@@ -108,8 +108,8 @@ namespace DataCreator
 
         private void populateImageParams()
         {
-            m_width = int.Parse(textBox3.Text);
-            m_height = int.Parse(textBox4.Text);
+            m_width = float.Parse(textBox3.Text);
+            m_height = float.Parse(textBox4.Text);
             m_numCols = int.Parse(textBox5.Text);
             m_numRows = int.Parse(textBox6.Text);
             m_sizeGridX = m_width / m_numCols;
